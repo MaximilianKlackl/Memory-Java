@@ -2,14 +2,16 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-
 public class Player extends VBox {
+
     private String name;
     private int score;
 
+    private boolean isCurrentPlayer = true;
+    private boolean hasGaveUp = false;
+
     private Label playerLabel;
     private Label scoreLabel;
-    private boolean isCurrentPlayer = true;
 
     public Player(String name){
         this.name = name;
@@ -47,8 +49,8 @@ public class Player extends VBox {
 
     public void setCurrentPlayerHighlight(){
         if(isCurrentPlayer){
-            scoreLabel.setStyle("-fx-text-fill: red;-fx-font-size: 18;");
-            playerLabel.setStyle("-fx-text-fill: red;-fx-font-size: 20;");
+            scoreLabel.setStyle("-fx-text-fill: green;-fx-font-size: 18;");
+            playerLabel.setStyle("-fx-text-fill: green;-fx-font-size: 20;");
         }else{
             scoreLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
             playerLabel.setStyle("-fx-text-fill: black;-fx-font-size: 18;");
@@ -61,5 +63,13 @@ public class Player extends VBox {
 
     public String getName() {
         return name;
+    }
+
+    public void setHasGaveUp(boolean bool){
+        this.hasGaveUp = bool;
+    }
+
+    public boolean hasGaveUp(boolean b) {
+        return hasGaveUp;
     }
 }

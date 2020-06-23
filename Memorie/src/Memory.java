@@ -1,13 +1,14 @@
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Memory extends Stage {
 
-    private int numOfPlayers;
     private int size;
 
     private Player[] players;
@@ -15,19 +16,31 @@ public class Memory extends Stage {
 
     private ArrayList<Card> cards;
     private ArrayList<Card> turnedCards = new ArrayList<>();
+
+    private Button giveUpButton = new Button("Give Up");
     private Board board;
 
-    public Memory(int size, int numberOfPlayers)
+    public Memory(int size, Player[] players)
     {
-        this.numOfPlayers = numberOfPlayers;
+        this.players = players;
         this.size = size;
 
         createBoardValues(size);
-        createPlayers(numOfPlayers);
         addEventHandlers(cards);
         players[currentPlayer].setIsCurrentPlayer(true);
 
-        board = new Board(players, cards, size);
+        giveUpButton.setOnAction(event -> {
+
+            players[currentPlayer].setHasGaveUp(true);
+
+            if(allGaveUp()){
+                showScores();
+            }else{
+                nextPlayer();
+            }
+        });
+
+        board = new Board(players, cards, size, giveUpButton);
 
         // stage settings
         this.setTitle("Memory");
@@ -42,16 +55,23 @@ public class Memory extends Stage {
         }
     }
 
-    private void createPlayers(int numOfPlayers){
-        players = new Player[numOfPlayers];
-        for(int i = 0; i < numOfPlayers; i++) {
-            players[i] = new Player("Player" + Integer.toString(i + 1));
-        }
+    private void showScores(){
+        close();
+        new ScorePopup(players, size);
     }
+
+    private boolean allGaveUp(){
+        for (Player player: players) {
+            if(!player.hasGaveUp(false)){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private void createBoardValues(int size)
     {
-        int cardValue = 0;
         int length = size % 2 == 0 ? size * size : (size * size) -1;
         cards = new ArrayList<Card>();
 
@@ -68,11 +88,19 @@ public class Memory extends Stage {
     private void nextPlayer()
     {
         players[currentPlayer].setIsCurrentPlayer(false);
+        int counter = currentPlayer;
 
-        if(currentPlayer == players.length-1){
-            currentPlayer = 0;
-        }else{
-            currentPlayer++;
+        while(true){
+            if(counter+1 != players.length){
+                counter++;
+            }else{
+                counter = 0;
+            }
+
+            if(!players[counter].hasGaveUp(false)){
+                currentPlayer = counter;
+                break;
+            }
         }
 
         players[currentPlayer].setIsCurrentPlayer(true);
@@ -107,8 +135,7 @@ public class Memory extends Stage {
                         players[currentPlayer].incrementScore();
 
                         if(!hasUnrevealedCard()){
-                            close();
-                            new AfterGameWindow(players, size);
+                            showScores();
                         }
                     }
                     else{

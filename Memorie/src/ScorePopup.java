@@ -8,19 +8,20 @@ import javafx.stage.Stage;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class AfterGameWindow extends Stage
+public class ScorePopup extends Stage
 {
     private VBox playerContainer = new VBox();
     private Button exit = new Button("Exit");
     private Button playAgain = new Button("Play Again");
 
-    AfterGameWindow(Player[] players, int size)
+    ScorePopup(Player[] players, int size)
     {
         playerContainer.setSpacing(10);
         playerContainer.setAlignment(Pos.CENTER);
         players = sortPlayersByScore(players);
 
-        for(int i = 0; i < players.length; i++){
+        for(int i = 0; i < players.length; i++)
+        {
             String text = (i + 1) + ". " + players[i].getName() + ": Score " + Integer.toString(players[i].getScore());
             playerContainer.getChildren().add(new Label(text));
         }
@@ -31,8 +32,15 @@ public class AfterGameWindow extends Stage
         Player[] finalPlayers = players;
 
         playAgain.setOnAction((event -> {
+            for (Player player: finalPlayers) {
+                player.setIsCurrentPlayer(false);
+                player.hasGaveUp(false);
+                player.setCurrentPlayerHighlight();
+            }
+
+            finalPlayers[0].setIsCurrentPlayer(true);
             this.close();
-            new Memory(finalPlayers.length, size+1);
+            new Memory(size, finalPlayers);
         }));
 
         exit.setOnAction((event -> {

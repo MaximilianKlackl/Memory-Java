@@ -1,4 +1,5 @@
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -9,15 +10,17 @@ public class Board extends BorderPane
     private ArrayList<Card> cards;
     private Player[] players;
     private int boardSize;
+    private Button giveUpButton;
 
     private GridPane board = new GridPane();
     private VBox playerContainer = new VBox();
 
-    public Board(Player[] players, ArrayList<Card> cards, int boardSize)
+    public Board(Player[] players, ArrayList<Card> cards, int boardSize, Button giveUpButton)
     {
         this.players = players;
         this.cards = cards;
         this.boardSize = boardSize;
+        this.giveUpButton = giveUpButton;
 
         initUI();
     }
@@ -50,6 +53,8 @@ public class Board extends BorderPane
         for (Player player: players) {
             playerContainer.getChildren().add(player);
         }
+
+        playerContainer.getChildren().add(giveUpButton);
 
         // add components to borderpane
         setCenter(board);
