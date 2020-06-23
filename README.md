@@ -1,2 +1,2 @@
 # Memory-Java
- JavaFX Memory
+ Graphical Memory written with the JavaFX Library
